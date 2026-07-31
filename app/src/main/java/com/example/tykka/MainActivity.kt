@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         val repository = ReceiptRepository(database.receiptDao(), dataStoreManager)
 
         setContent {
-            // Creamos u obtenemos el ViewModel directamente aquí
+            // Creamos u obtenemos el ViewModel
             val viewModel: ReceiptViewModel = viewModel(
                 factory = object : ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
