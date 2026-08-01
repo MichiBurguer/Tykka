@@ -4,15 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tykka.data.AppDatabase
 import com.example.tykka.data.DataStoreManager
 import com.example.tykka.data.ReceiptRepository
 import com.example.tykka.ui.AppNavigation
 import com.example.tykka.viewmodel.ReceiptViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.Composable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +28,6 @@ class MainActivity : ComponentActivity() {
         val repository = ReceiptRepository(database.receiptDao(), dataStoreManager)
 
         setContent {
-            // Creamos u obtenemos el ViewModel
             val viewModel: ReceiptViewModel = viewModel(
                 factory = object : ViewModelProvider.Factory {
                     @Suppress("UNCHECKED_CAST")
@@ -34,7 +37,13 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-            AppNavigation(viewModel = viewModel)
+            val isDarkMode by viewModel.isDarkMode.collectAsState()
+
+            MaterialTheme(
+                colorScheme = if (isDarkMode) darkColorScheme() else lightColorScheme()
+            ) {
+                AppNavigation(viewModel = viewModel)
+            }
         }
     }
 }

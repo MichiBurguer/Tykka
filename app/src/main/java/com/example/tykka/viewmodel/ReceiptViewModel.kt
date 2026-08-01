@@ -30,6 +30,19 @@ class ReceiptViewModel(private val repository: ReceiptRepository) : ViewModel() 
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = "$"
         )
+    val daysAlert: StateFlow<Int> = repository.daysAlert
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 7
+        )
+    val isDarkMode: StateFlow<Boolean> = repository.isDarkMode
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+
 
     private val _emisorState = MutableStateFlow<ApiState<EmisorDto>>(ApiState.Loading)
     val emisorState: StateFlow<ApiState<EmisorDto>> = _emisorState.asStateFlow()
@@ -72,6 +85,16 @@ class ReceiptViewModel(private val repository: ReceiptRepository) : ViewModel() 
     fun setCurrency(symbol: String) {
         viewModelScope.launch {
             repository.updateCurrency(symbol)
+        }
+    }
+    fun setDaysAlert(days: Int) {
+        viewModelScope.launch {
+            repository.updateDaysAlert(days)
+        }
+    }
+    fun setDarkMode(enable: Boolean) {
+        viewModelScope.launch {
+            repository.updateDarkMode(enable)
         }
     }
 }

@@ -7,37 +7,42 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import androidx.datastore.preferences.core.booleanPreferencesKey
 
 private val Context.dataStore by preferencesDataStore(name = "user_settings")
 
 class DataStoreManager(private val context: Context) {
 
     companion object {
-        val CURRENCY_KEY = stringPreferencesKey("currency_symbol")
-        val DAYS_ALERT_KEY = intPreferencesKey("days_alert_expiration")
+        private val CURRENCY_KEY = stringPreferencesKey("currency_symbol")
+        private val DAYS_ALERT_KEY = intPreferencesKey("days_alert")
+        private val DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
+
     }
 
-    // Leer la moneda configurada (por defecto "$")
-    val currencySymbol: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[CURRENCY_KEY] ?: "$"
+    // Lectura de Preferencias
+    val currencySymbol: Flow<String> = context.dataStore.data.map { prefs ->
+        prefs[CURRENCY_KEY] ?: "$"
     }
 
-    // Guardar la moneda
+    val daysAlert: Flow<Int> = context.dataStore.data.map { prefs ->
+        prefs[DAYS_ALERT_KEY] ?: 7 // Valor por defecto: 7 días
+    }
+
+    val isDarkMode: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[DARK_MODE_KEY] ?: false // Valor por defecto: Modo Claro
+    }
+
+    // Escritura de Preferencias
     suspend fun saveCurrencySymbol(symbol: String) {
-        context.dataStore.edit { preferences ->
-            preferences[CURRENCY_KEY] = symbol
-        }
+        context.dataStore.edit { prefs -> prefs[CURRENCY_KEY] = symbol }
     }
 
-    // Leer días de anticipación para alerta (por defecto 30 días)
-    val daysAlert: Flow<Int> = context.dataStore.data.map { preferences ->
-        preferences[DAYS_ALERT_KEY] ?: 30
-    }
-
-    // Guardar días de aviso
     suspend fun saveDaysAlert(days: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[DAYS_ALERT_KEY] = days
-        }
+        context.dataStore.edit { prefs -> prefs[DAYS_ALERT_KEY] = days }
+    }
+
+    suspend fun saveDarkMode(enabled: Boolean) {
+        context.dataStore.edit { prefs -> prefs[DARK_MODE_KEY] = enabled }
     }
 }

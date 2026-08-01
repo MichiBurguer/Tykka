@@ -24,6 +24,7 @@ class ReceiptRepository(
     // Preferencias desde DataStore
     val currencySymbol: Flow<String> = dataStoreManager.currencySymbol
     val daysAlert: Flow<Int> = dataStoreManager.daysAlert
+    val isDarkMode: Flow<Boolean> = dataStoreManager.isDarkMode
 
     suspend fun updateCurrency(symbol: String) {
         dataStoreManager.saveCurrencySymbol(symbol)
@@ -36,4 +37,9 @@ class ReceiptRepository(
     suspend fun fetchEmisor(id: Int): EmisorDto {
         return apiService.getEmisorPorId(id)
     }
+
+    suspend fun updateDarkMode(enable: Boolean) {
+        dataStoreManager.saveDarkMode(enable)
+    }
+
 }

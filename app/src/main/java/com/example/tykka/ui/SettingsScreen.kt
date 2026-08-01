@@ -5,60 +5,100 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.tykka.viewmodel.ReceiptViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    currencySymbol: String,
-    onSaveCurrency: (String) -> Unit,
+    viewModel: ReceiptViewModel,
     onBack: () -> Unit
 ) {
-    // Estado local para el campo de texto
-    var tempCurrency by remember(currencySymbol) { mutableStateOf(currencySymbol) }
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
+    val daysAlert by viewModel.daysAlert.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Ajustes de Preferencias") },
-                navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("← Volver")
+    var daysText by remember(daysAlert) { mutableStateOf(daysAlert.toString()) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Ajustes de Preferencias",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Modo Oscuro
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Modo Oscuro", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        "Cambiar la apariencia de la app",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Switch(
+                    checked = isDarkMode,
+                    onCheckedChange = { viewModel.setDarkMode(it) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Alerta garantia
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Alerta de Garantía", fontWeight = FontWeight.SemiBold)
+                Text(
+                    "Días de anticipación para notificar vencimiento",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = daysText,
+                        onValueChange = { daysText = it },
+                        label = { Text("Días (ej. 7, 15, 30)") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = {
+                        val days = daysText.toIntOrNull() ?: 7
+                        viewModel.setDaysAlert(days)
+                    }) {
+                        Text("Guardar")
                     }
                 }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Text(
-                text = "Configuración General",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            // Selector / Entrada de Símbolo de Moneda
-            OutlinedTextField(
-                value = tempCurrency,
-                onValueChange = { tempCurrency = it },
-                label = { Text("Símbolo de Moneda") },
-                placeholder = { Text("Ej: $, €, S/, MXN$") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Button(
-                onClick = {
-                    onSaveCurrency(tempCurrency)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Guardar Preferencias")
             }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = onBack,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Volver al Inicio")
         }
     }
 }
