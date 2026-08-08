@@ -19,86 +19,104 @@ fun SettingsScreen(
 
     var daysText by remember(daysAlert) { mutableStateOf(daysAlert.toString()) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Text(
-            text = "Ajustes de Preferencias",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Modo Oscuro
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Text(
+                text = "Ajustes de Preferencias",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Modo Oscuro", fontWeight = FontWeight.SemiBold)
-                    Text(
-                        "Cambiar la apariencia de la app",
-                        style = MaterialTheme.typography.bodySmall
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Modo Oscuro",
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "Cambiar la apariencia de la app",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        )
+                    }
+                    Switch(
+                        checked = isDarkMode,
+                        onCheckedChange = { viewModel.setDarkMode(it) }
                     )
                 }
-                Switch(
-                    checked = isDarkMode,
-                    onCheckedChange = { viewModel.setDarkMode(it) }
-                )
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Alerta garantia
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Alerta de Garantía", fontWeight = FontWeight.SemiBold)
-                Text(
-                    "Días de anticipación para notificar vencimiento",
-                    style = MaterialTheme.typography.bodySmall
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = daysText,
-                        onValueChange = { daysText = it },
-                        label = { Text("Días (ej. 7, 15, 30)") },
-                        modifier = Modifier.weight(1f)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Alerta de Garantía",
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = {
-                        val days = daysText.toIntOrNull() ?: 7
-                        viewModel.setDaysAlert(days)
-                    }) {
-                        Text("Guardar")
+                    Text(
+                        text = "Días de anticipación para notificar vencimiento",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(
+                            value = daysText,
+                            onValueChange = { daysText = it },
+                            label = { Text("Días (ej. 7, 15, 30)") },
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(onClick = {
+                            val days = daysText.toIntOrNull() ?: 7
+                            viewModel.setDaysAlert(days)
+                        }) {
+                            Text("Guardar")
+                        }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            onClick = onBack,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Volver al Inicio")
+            Button(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Volver al Inicio")
+            }
         }
     }
 }
